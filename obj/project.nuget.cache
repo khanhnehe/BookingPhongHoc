@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "BY1cwIOOUQ4bXHvq+IKJeCXoAcBO8shjI2DxyJ2dSz/oNauMDslh1MjNU4tJffHTCfE3Fo/q5QwbLPkXPF9K/w==",
+  "dgSpecHash": "IDE19RySnaGBmR+xM9KNnKIEymRnxDIvVfV2Wf/qR5239iFHgD9IwPLNGMg5/9n2o/1WL+nCq/6NptPv6M4fNA==",
   "success": true,
   "projectFilePath": "N:\\BookingPhongHoc\\BookingPhongHoc.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\LENOVO\\.nuget\\packages\\airtable\\1.4.0\\airtable.1.4.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\swashbuckle.aspnetcore\\6.5.0\\swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.5.0\\swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.5.0\\swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",

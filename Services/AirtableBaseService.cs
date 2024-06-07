@@ -10,7 +10,7 @@ public class AirtableBaseService
     protected readonly string _apiKey;
     protected readonly string _baseId;
     protected readonly string _tableId;
-    private const string BaseUrl = "https://api.airtable.com/v0";
+    protected const string BaseUrl = "https://api.airtable.com/v0";
 
     public AirtableBaseService(HttpClient httpClient, IConfiguration configuration, string tableId)
     {
@@ -21,18 +21,21 @@ public class AirtableBaseService
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
     }
 
-    public async Task<string> GetAllRecordsAsync()
+    protected string GetUrl(string id = null)
     {
-        var requestUrl = $"{BaseUrl}/{_baseId}/{_tableId}";
-        var response = await _httpClient.GetAsync(requestUrl);
+        return id == null ? $"{BaseUrl}/{_baseId}/{_tableId}" : $"{BaseUrl}/{_baseId}/{_tableId}/{id}";
+    }
+
+    protected async Task<string> SendAsync(HttpMethod method, string url, HttpContent content = null)
+    {
+        var request = new HttpRequestMessage(method, url) { Content = content };
+        var response = await _httpClient.SendAsync(request);
 
         if (response.IsSuccessStatusCode)
         {
-            var content = await response.Content.ReadAsStringAsync();
-            return content;
+            return await response.Content.ReadAsStringAsync();
         }
 
-        throw new Exception($"Error fetching records: {response.StatusCode}");
+        throw new Exception($"Error {method} record: {response.StatusCode}");
     }
-
 }
