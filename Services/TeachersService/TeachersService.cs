@@ -5,6 +5,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using BookingPhongHoc;
+using System.ComponentModel.DataAnnotations;
+using Flurl.Http;
 
 public class TeachersService : AirtableBaseService
 {
@@ -25,24 +28,46 @@ public class TeachersService : AirtableBaseService
         return teachersData;
     }
 
-    public async Task CreateTeacherAsync(Teachers input)
-{
+    public async Task<Teachers> CreateTeacherAsync(Teachers input)
+    {
+        // Set the default role if it's not provided
+        if (input.Role == null)
+        {
+            input.Role = Enums.Role.gvtg;
+        }
+
         // Hash the password before sending the request
         input.Password = _passwordHasher.HashPassword(input, input.Password);
 
-    var record = new { records = new[] { new { fields = input } } };
-    var json = JsonConvert.SerializeObject(record);
-    var data = new StringContent(json, Encoding.UTF8, "application/json");
-    var url = GetUrl();
+        var record = new { records = new[] { new { fields = input } } };
+        var json = JsonConvert.SerializeObject(record);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        var url = GetUrl();
 
-    var response = await SendAsync(HttpMethod.Post, url, data);
+        var response = await SendAsync(HttpMethod.Post, url, data);
 
-    if (!response.IsSuccessStatusCode)
-    {
-        throw new Exception($"Error creating teacher: {response.StatusCode}");
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Error creating teacher: {response.StatusCode}");
+        }
+
+        // Parse the response
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var createTeacher = JsonConvert.DeserializeObject<TeachersData>(responseContent);
+
+        // Assuming that the first record in the response is the created teacher
+        var newTeacher = createTeacher.Records[0].Fields;
+
+        // Return a new Teachers object without the password
+        return new Teachers
+        {
+            TeacherName = newTeacher.TeacherName,
+            PhoneNumber = newTeacher.PhoneNumber,
+            Email = newTeacher.Email,
+            Role = newTeacher.Role,
+            Avatar = newTeacher.Avatar
+        };
     }
-}
-
 
     public async Task<Teachers> UpdateTeacherAsync(string id, Teachers teacher)
     {

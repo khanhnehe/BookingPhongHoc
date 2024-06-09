@@ -20,8 +20,7 @@ namespace BookingPhongHoc.Dtos
         [Required]
         public string Password { get; set; }
 
-        [Required]
-        public string? Role { get; set; }
+        public Role? Role { get; set; }
         public string? Avatar { get; set; }
     }
 

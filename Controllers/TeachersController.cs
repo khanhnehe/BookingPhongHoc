@@ -32,15 +32,12 @@ namespace BookingPhongHoc.Controllers
         [HttpPost("create-teacher")]
         public async Task<IActionResult> CreateTeacher([FromBody] Teachers teacher)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+
 
             try
             {
-                await _teachersService.CreateTeacherAsync(teacher);
-                return Ok(new { message = "Teacher created successfully" });
+                var NewTeacher = await _teachersService.CreateTeacherAsync(teacher);
+                return Ok(new { message = "Teacher created successfully", result = NewTeacher });
             }
             catch (Exception ex)
             {
