@@ -38,3 +38,4 @@ N:\BookingPhongHoc\obj\Debug\net6.0\BookingPhongHoc.sourcelink.json
 N:\BookingPhongHoc\bin\Debug\net6.0\Newtonsoft.Json.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\Flurl.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\Flurl.Http.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\AutoWrapper.dll

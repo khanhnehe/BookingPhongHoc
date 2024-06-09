@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "21vHejTjSuQaaapwVHb/1ijFjpnjWl6TNGAOoXtUoYh6fy0Y/vsG/tDa3NF6EFsnOi8pGFDKK5SJdqKRLPPUFQ==",
+  "dgSpecHash": "dem2EbY7s6GBA4EIIHbigWgkO9qRXAfy0hUm44yD3M8LQIhs+2W3yzdh3URLByH9GWyVOQp7Q6PoL408Adurzw==",
   "success": true,
   "projectFilePath": "N:\\BookingPhongHoc\\BookingPhongHoc.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\LENOVO\\.nuget\\packages\\airtable\\1.4.0\\airtable.1.4.0.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\autowrapper.core\\4.5.1\\autowrapper.core.4.5.1.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\flurl\\4.0.0\\flurl.4.0.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\flurl.http\\4.0.2\\flurl.http.4.0.2.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

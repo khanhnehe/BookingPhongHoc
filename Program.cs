@@ -2,6 +2,7 @@ using BookingPhongHoc.Dtos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using AutoWrapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseApiResponseAndExceptionWrapper(options: new AutoWrapperOptions
+{
+    ExcludePaths = new List<AutoWrapperExcludePath> { new AutoWrapperExcludePath("/api/report/export", excludeMode: ExcludeMode.Strict) }
+});
+
 
 app.MapControllers();
 

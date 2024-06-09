@@ -9,6 +9,7 @@
       "BookingPhongHoc/1.0.0": {
         "dependencies": {
           "Airtable": "1.4.0",
+          "AutoWrapper.Core": "4.5.1",
           "Flurl.Http": "4.0.2",
           "Newtonsoft.Json": "13.0.3",
           "Swashbuckle.AspNetCore": "6.5.0"
@@ -25,6 +26,17 @@
           "lib/netstandard2.0/AirtableApiClient.dll": {
             "assemblyVersion": "2.0.0.0",
             "fileVersion": "2.0.0.0"
+          }
+        }
+      },
+      "AutoWrapper.Core/4.5.1": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3"
+        },
+        "runtime": {
+          "lib/net6.0/AutoWrapper.dll": {
+            "assemblyVersion": "4.5.1.0",
+            "fileVersion": "4.5.1.0"
           }
         }
       },
@@ -148,6 +160,13 @@
       "sha512": "sha512-MjxegrI34wyu06Zl1qJFE1U1glRbTeNTsYzLDVAH5/ba1QcjAipIp7qsZHkTzdjP6MkEQFleaW+71WQ8itniXA==",
       "path": "airtable/1.4.0",
       "hashPath": "airtable.1.4.0.nupkg.sha512"
+    },
+    "AutoWrapper.Core/4.5.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-voHfDZSDqBdSTwJHHSLhZu61opz/5OEKqn+P+0DEa0hdOOo8FfFWXSnZQYKMjwWurKR0f5hD/InPN2h828rMag==",
+      "path": "autowrapper.core/4.5.1",
+      "hashPath": "autowrapper.core.4.5.1.nupkg.sha512"
     },
     "Flurl/4.0.0": {
       "type": "package",

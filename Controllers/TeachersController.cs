@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using BookingPhongHoc.Dtos;
+﻿using BookingPhongHoc.Dtos;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using AutoWrapper.Wrappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BookingPhongHoc.Controllers
 {
@@ -9,42 +11,52 @@ namespace BookingPhongHoc.Controllers
     public class TeachersController : ControllerBase
     {
         private readonly TeachersService _teachersService;
+        private readonly ILogger<TeachersController> _logger;
 
-        public TeachersController(TeachersService teachersService)
+        public TeachersController(TeachersService teachersService, ILogger<TeachersController> logger)
         {
             _teachersService = teachersService;
+            _logger = logger;
         }
 
         [HttpGet("get-all-teachers")]
-        public async Task<IActionResult> GetAllTeachers()
+        public async Task<object> GetAllTeachers()
         {
             try
             {
                 var teachers = await _teachersService.GetAllTeachersAsync();
-                return Ok(new { message = "GET Request successful.", result = teachers });
+                return new { message = "GET Request successful.", result = teachers };
+            }
+            catch (ApiException ex)
+            {
+                throw new ApiException($"{ex.Message}");
+
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = $"An error occurred while fetching the teachers: {ex.Message}" });
+                _logger.LogError(ex, ex.Message);
+                throw new ApiException("Có lỗi xảy ra.");
             }
         }
 
         [HttpPost("create-teacher")]
-        public async Task<IActionResult> CreateTeacher([FromBody] Teachers teacher)
+        public async Task<object> CreateTeacher([FromBody] Teachers teacher)
         {
-
-
             try
             {
                 var NewTeacher = await _teachersService.CreateTeacherAsync(teacher);
-                return Ok(new { message = "Teacher created successfully", result = NewTeacher });
+                return new { message = "Teacher created successfully", result = NewTeacher };
+            }
+            catch (ApiException ex)
+            {
+                throw new ApiException($"{ex.Message}");
+
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = $"An error occurred while creating the teacher: {ex.Message}" });
+                _logger.LogError(ex, ex.Message);
+                throw new ApiException($"Có lỗi xảy ra: {ex.Message}");
             }
         }
-
-        // The rest of your code...
     }
 }

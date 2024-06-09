@@ -14,6 +14,21 @@
           "lib/netstandard2.0/AirtableApiClient.dll": {}
         }
       },
+      "AutoWrapper.Core/4.5.1": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3"
+        },
+        "compile": {
+          "lib/net6.0/AutoWrapper.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/AutoWrapper.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "Flurl/4.0.0": {
         "type": "package",
         "compile": {
@@ -220,6 +235,22 @@
         "airtable.nuspec",
         "airtable_64x64.png",
         "lib/netstandard2.0/AirtableApiClient.dll"
+      ]
+    },
+    "AutoWrapper.Core/4.5.1": {
+      "sha512": "voHfDZSDqBdSTwJHHSLhZu61opz/5OEKqn+P+0DEa0hdOOo8FfFWXSnZQYKMjwWurKR0f5hD/InPN2h828rMag==",
+      "type": "package",
+      "path": "autowrapper.core/4.5.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "autowrapper.core.4.5.1.nupkg.sha512",
+        "autowrapper.core.nuspec",
+        "icon.png",
+        "lib/net6.0/AutoWrapper.dll",
+        "lib/netcoreapp3.0/AutoWrapper.dll",
+        "lib/netcoreapp3.1/AutoWrapper.dll"
       ]
     },
     "Flurl/4.0.0": {
@@ -758,6 +789,7 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "Airtable >= 1.4.0",
+      "AutoWrapper.Core >= 4.5.1",
       "Flurl.Http >= 4.0.2",
       "Newtonsoft.Json >= 13.0.3",
       "Swashbuckle.AspNetCore >= 6.5.0"
@@ -810,6 +842,10 @@
           "Airtable": {
             "target": "Package",
             "version": "[1.4.0, )"
+          },
+          "AutoWrapper.Core": {
+            "target": "Package",
+            "version": "[4.5.1, )"
           },
           "Flurl.Http": {
             "target": "Package",

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 public class AirtableBaseService
 {
@@ -45,5 +47,12 @@ public class AirtableBaseService
         }
 
         return response;
+    }
+
+    protected async Task<HttpResponseMessage> SendJsonAsync(HttpMethod method, string url, object record)
+    {
+        var json = JsonConvert.SerializeObject(record);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        return await SendAsync(method, url, data);
     }
 }

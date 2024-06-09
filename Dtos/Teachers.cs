@@ -6,7 +6,7 @@ namespace BookingPhongHoc.Dtos
 {
     public class Teachers
     {
-        //public string Id { get; set; } // Để Id là string
+        //public string Id { get; set; } 
 
         [Required]
         public string TeacherName { get; set; }
@@ -21,6 +21,9 @@ namespace BookingPhongHoc.Dtos
         public string Password { get; set; }
 
         public Role? Role { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
         public string? Avatar { get; set; }
     }
 
