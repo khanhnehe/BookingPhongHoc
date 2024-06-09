@@ -6,19 +6,25 @@ using Microsoft.Extensions.Configuration;
 
 public class AirtableBaseService
 {
-    protected readonly HttpClient _httpClient;
+    private readonly IHttpClientFactory _httpClientFactory;
     protected readonly string _apiKey;
     protected readonly string _baseId;
     protected readonly string _tableId;
     protected const string BaseUrl = "https://api.airtable.com/v0";
 
-    public AirtableBaseService(HttpClient httpClient, IConfiguration configuration, string tableId)
+    public AirtableBaseService(IHttpClientFactory httpClientFactory, IConfiguration configuration, string tableId)
     {
-        _httpClient = httpClient;
+        _httpClientFactory = httpClientFactory;
         _apiKey = configuration["Airtable:ApiKey"];
         _baseId = configuration["Airtable:BaseId"];
         _tableId = tableId;
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+    }
+
+    private HttpClient CreateClient()
+    {
+        var client = _httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+        return client;
     }
 
     protected string GetUrl(string id = null)
@@ -26,16 +32,18 @@ public class AirtableBaseService
         return id == null ? $"{BaseUrl}/{_baseId}/{_tableId}" : $"{BaseUrl}/{_baseId}/{_tableId}/{id}";
     }
 
-    protected async Task<string> SendAsync(HttpMethod method, string url, HttpContent content = null)
+    protected async Task<HttpResponseMessage> SendAsync(HttpMethod method, string url, HttpContent content = null)
     {
+        var client = CreateClient();
         var request = new HttpRequestMessage(method, url) { Content = content };
-        var response = await _httpClient.SendAsync(request);
+        var response = await client.SendAsync(request);
 
-        if (response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
         {
-            return await response.Content.ReadAsStringAsync();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Error {method} record: {response.StatusCode}\n{responseContent}");
         }
 
-        throw new Exception($"Error {method} record: {response.StatusCode}");
+        return response;
     }
 }

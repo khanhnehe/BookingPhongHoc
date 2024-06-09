@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BookingPhongHoc.Dtos;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace BookingPhongHoc.Controllers
 {
@@ -18,32 +18,36 @@ namespace BookingPhongHoc.Controllers
         [HttpGet("get-all-teachers")]
         public async Task<IActionResult> GetAllTeachers()
         {
-            var json = await _teachersService.GetAllTeachersAsync();
-            var teachersData = JsonConvert.DeserializeObject<TeachersData>(json);
-            var teachersList = teachersData.Records.Select(record => record.Fields).ToList();
-            var teachersJson = JsonConvert.SerializeObject(teachersList, Formatting.Indented);
-            return Ok(teachersJson);
+            try
+            {
+                var teachers = await _teachersService.GetAllTeachersAsync();
+                return Ok(new { message = "GET Request successful.", result = teachers });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"An error occurred while fetching the teachers: {ex.Message}" });
+            }
         }
 
-        [HttpPost("add-teacher")]
-        public async Task<IActionResult> AddTeacher(Teachers teacher)
+        [HttpPost("create-teacher")]
+        public async Task<IActionResult> CreateTeacher([FromBody] Teachers teacher)
         {
-            var result = await _teachersService.CreateTeacherAsync(teacher);
-            return Ok(result);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await _teachersService.CreateTeacherAsync(teacher);
+                return Ok(new { message = "Teacher created successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"An error occurred while creating the teacher: {ex.Message}" });
+            }
         }
 
-        [HttpPut("update-teacher/{id}")]
-        public async Task<IActionResult> UpdateTeacher(string id, Teachers teacher)
-        {
-            var result = await _teachersService.UpdateTeacherAsync(id, teacher);
-            return Ok(result);
-        }
-
-        [HttpDelete("delete-teacher/{id}")]
-        public async Task<IActionResult> DeleteTeacher(string id)
-        {
-            await _teachersService.DeleteTeacherAsync(id);
-            return Ok();
-        }
+        // The rest of your code...
     }
 }

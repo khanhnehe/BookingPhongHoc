@@ -1,41 +1,62 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using BookingPhongHoc.Dtos;
+using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using BookingPhongHoc.Dtos;
+using Microsoft.Extensions.Configuration;
 
 public class TeachersService : AirtableBaseService
 {
-    public TeachersService(HttpClient httpClient, IConfiguration configuration)
-        : base(httpClient, configuration, configuration["Airtable:Tables:Teachers"])
+    private readonly PasswordHasher<Teachers> _passwordHasher;
+
+    public TeachersService(IHttpClientFactory httpClientFactory, IConfiguration configuration, PasswordHasher<Teachers> passwordHasher)
+        : base(httpClientFactory, configuration, configuration["Airtable:Tables:Teachers"])
     {
+        _passwordHasher = passwordHasher;
     }
 
-    public async Task<string> GetAllTeachersAsync()
+    public async Task<TeachersData> GetAllTeachersAsync()
     {
         var url = GetUrl();
-        return await SendAsync(HttpMethod.Get, url);
+        var response = await SendAsync(HttpMethod.Get, url);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var teachersData = JsonConvert.DeserializeObject<TeachersData>(responseContent);
+        return teachersData;
     }
 
-    public async Task<string> CreateTeacherAsync(Teachers teacher)
-    {
-        var teacherFields = new TeachersFields { Fields = teacher };
-        var json = JsonConvert.SerializeObject(teacherFields);
-        var data = new StringContent(json, Encoding.UTF8, "application/json");
-        var url = GetUrl();
+    public async Task CreateTeacherAsync(Teachers input)
+{
+        // Hash the password before sending the request
+        input.Password = _passwordHasher.HashPassword(input, input.Password);
 
-        return await SendAsync(HttpMethod.Post, url, data);
+    var record = new { records = new[] { new { fields = input } } };
+    var json = JsonConvert.SerializeObject(record);
+    var data = new StringContent(json, Encoding.UTF8, "application/json");
+    var url = GetUrl();
+
+    var response = await SendAsync(HttpMethod.Post, url, data);
+
+    if (!response.IsSuccessStatusCode)
+    {
+        throw new Exception($"Error creating teacher: {response.StatusCode}");
     }
+}
 
-    public async Task<string> UpdateTeacherAsync(string id, Teachers teacher)
+
+    public async Task<Teachers> UpdateTeacherAsync(string id, Teachers teacher)
     {
-        var teacherFields = new TeachersFields { Fields = teacher };
-        var json = JsonConvert.SerializeObject(teacherFields);
+        var record = new { records = new[] { new { fields = teacher } } };
+        var json = JsonConvert.SerializeObject(record);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
         var url = GetUrl(id);
 
-        return await SendAsync(HttpMethod.Put, url, data);
+        var response = await SendAsync(HttpMethod.Put, url, data);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var updatedTeacherData = JsonConvert.DeserializeObject<TeachersData>(responseContent);
+
+        // Assuming that the first record in the response is the updated teacher
+        return updatedTeacherData.Records[0].Fields;
     }
 
     public async Task DeleteTeacherAsync(string id)

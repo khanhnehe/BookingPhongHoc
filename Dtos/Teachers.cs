@@ -1,11 +1,28 @@
-﻿namespace BookingPhongHoc.Dtos
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using static BookingPhongHoc.Enums;
+
+namespace BookingPhongHoc.Dtos
 {
     public class Teachers
     {
+        //public string Id { get; set; } // Để Id là string
+
+        [Required]
         public string TeacherName { get; set; }
-        public string Id { get; set; }
+
+        [Required]
+        public string PhoneNumber { get; set; }
+
+        [Required]
         public string Email { get; set; }
-        public string Role { get; set; } // Đổi kiểu dữ liệu Role thành string
+
+        [Required]
+        public string Password { get; set; }
+
+        [Required]
+        public string? Role { get; set; }
+        public string? Avatar { get; set; }
     }
 
     public class TeachersFields
