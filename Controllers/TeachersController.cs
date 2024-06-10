@@ -1,8 +1,10 @@
-﻿using BookingPhongHoc.Dtos;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using AutoWrapper.Wrappers;
+﻿using AutoWrapper.Wrappers;
+using BookingPhongHoc.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace BookingPhongHoc.Controllers
 {
@@ -24,18 +26,17 @@ namespace BookingPhongHoc.Controllers
         {
             try
             {
-                var teachers = await _teachersService.GetAllTeachersAsync();
-                return new { message = "GET Request successful.", result = teachers };
+                var teachers = await _teachersService.GetAllTeachers();
+                return new {  teachers };
             }
             catch (ApiException ex)
             {
                 throw new ApiException($"{ex.Message}");
-
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                throw new ApiException("Có lỗi xảy ra.");
+                throw new ApiException($"Có lỗi xảy ra: {ex.Message}");
             }
         }
 
@@ -44,13 +45,32 @@ namespace BookingPhongHoc.Controllers
         {
             try
             {
-                var NewTeacher = await _teachersService.CreateTeacherAsync(teacher);
-                return new { message = "Teacher created successfully", result = NewTeacher };
+                var newTeacher = await _teachersService.CreateTeacher(teacher);
+                return new { newTeacher };
             }
             catch (ApiException ex)
             {
                 throw new ApiException($"{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw new ApiException($"Có lỗi xảy ra: {ex.Message}");
+            }
+        }
 
+        [AllowAnonymous]
+        [HttpPost("sign-in")]
+        public async Task<ApiResponse> SignIn([FromBody] SignIn signInRequest)
+        {
+            try
+            {
+                var token = await _teachersService.SignIn(signInRequest);
+                return new ApiResponse("Đăng nhập thành công", token);
+            }
+            catch (ApiException ex)
+            {
+                throw new ApiException($"{ex.Message}");
             }
             catch (Exception ex)
             {

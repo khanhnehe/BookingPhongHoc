@@ -39,3 +39,11 @@ N:\BookingPhongHoc\bin\Debug\net6.0\Newtonsoft.Json.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\Flurl.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\Flurl.Http.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\AutoWrapper.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.IdentityModel.JsonWebTokens.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.IdentityModel.Logging.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll

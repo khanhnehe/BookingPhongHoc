@@ -6,7 +6,6 @@ namespace BookingPhongHoc.Helper
     public class Security
     {
        
-        
 
         public static string GenerateCode(int length)
         {
@@ -18,18 +17,6 @@ namespace BookingPhongHoc.Helper
         }
 
       
-
-        public static bool VerifyPassword(string enteredPassword, byte[] salt, string hashPassword)
-        {
-            string encryptedPassw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                    password: enteredPassword,
-                    salt: salt,
-                    prf: KeyDerivationPrf.HMACSHA256,
-                    iterationCount: 10000,
-                    numBytesRequested: 256 / 8));
-
-            return encryptedPassw == hashPassword;
-        }
     }
 }
 
