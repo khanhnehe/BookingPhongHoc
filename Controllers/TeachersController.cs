@@ -20,6 +20,7 @@ namespace BookingPhongHoc.Controllers
             _teachersService = teachersService;
             _logger = logger;
         }
+
         [Authorize]
         [HttpGet("get-all-teachers")]
         public async Task<object> GetAllTeachers()
@@ -27,8 +28,9 @@ namespace BookingPhongHoc.Controllers
             try
             {
                 var teachersData = await _teachersService.GetAllTeachers();
-                var Getteachers = teachersData.Records.Select(record => new Teachers
+                var teachers = teachersData.Records.Select(record => new
                 {
+                    Id = record.Id,
                     TeacherName = record.Fields.TeacherName,
                     PhoneNumber = record.Fields.PhoneNumber,
                     Email = record.Fields.Email,
@@ -36,7 +38,7 @@ namespace BookingPhongHoc.Controllers
                     IsActive = record.Fields.IsActive,
                     Avatar = record.Fields.Avatar
                 }).ToArray();
-                return new { teachers = Getteachers };
+                return new { teachers };
             }
             catch (ApiException ex)
             {
@@ -69,6 +71,66 @@ namespace BookingPhongHoc.Controllers
                 throw new ApiException($"Có lỗi xảy ra: {ex.Message}");
             }
         }
+        [Authorize]
+        [HttpPut("change-password/{id}")]
+        public async Task<IActionResult> ChangePassword(string id, [FromBody] ChangePassword changePassword)
+        {
+            try
+            {
+                await _teachersService.ChangePassword(id, changePassword.PhoneNumber, changePassword.CurrentPassword, changePassword.NewPassword);
+                return Ok(new { message = "Password changed successfully" });
+            }
+            catch (ApiException ex)
+            {
+                throw new ApiException($"{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw new ApiException($"Có lỗi xảy ra: {ex.Message}");
+            }
+        }
+
+        [Authorize]
+        [HttpPut("update-teacher/{id}")]
+        public async Task<IActionResult> UpdateTeacher(string id, [FromBody] Teachers input)
+        {
+            try
+            {
+                var updatedTeacher = await _teachersService.UpdateTeacher(id, input);
+                return Ok(new { updatedTeacher });
+            }
+            catch (ApiException ex)
+            {
+                throw new ApiException($"{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw new ApiException($"Có lỗi xảy ra: {ex.Message}");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("delete-teacher/{id}")]
+        public async Task<IActionResult> DeleteTeacher(string id)
+        {
+            try
+            {
+                await _teachersService.DeleteTeacher(id);
+                return Ok(new { message = "Teacher deleted successfully" });
+            }
+            catch (ApiException ex)
+            {
+                throw new ApiException($"{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw new ApiException($"Có lỗi xảy ra: {ex.Message}");
+            }
+        }
+
 
         [AllowAnonymous]
         [HttpPost("sign-in")]

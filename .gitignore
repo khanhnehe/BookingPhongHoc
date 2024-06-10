@@ -1,2 +1,59 @@
-**/appsettings.json
+﻿# Loại trừ thư mục .vs (Visual Studio)
 .vs/
+
+# Loại trừ các thư mục obj và bin
+obj/
+bin/
+
+# Loại trừ các tệp và thư mục liên quan đến xây dựng (build)
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.localhistory
+*.cache
+*.proj.user
+*.ide
+*.pidb
+*.pdb
+*.mdd
+*.sav
+*.csproj.orig
+*.sln.docstates
+*.sln.ide
+*.swp
+
+# Loại trừ các tệp liên quan đến NuGet
+*.nupkg
+*.nuget
+
+# Loại trừ các thư mục và tệp liên quan đến Rider
+.idea/
+*.sln.iml
+
+# Loại trừ các tệp Log
+*.log
+
+# Loại trừ các tệp tạm thời
+*.tmp
+*.temp
+
+# Loại trừ tệp nhị phân
+*.exe
+*.dll
+
+# Loại trừ các tệp dựng (build) của .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Loại trừ các tệp liên quan đến VS Code
+.vscode/
+
+# Loại trừ các tệp tạm thời của hệ điều hành
+.DS_Store
+Thumbs.db
+
+# Loại trừ tệp nhạy cảm trong appsettings.json
+# Nếu bạn có phiên bản mẫu, giữ lại phiên bản mẫu và loại trừ bản thật
+appsettings.json

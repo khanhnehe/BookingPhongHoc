@@ -6,8 +6,6 @@ namespace BookingPhongHoc.Dtos
 {
     public class Teachers
     {
-        //public string Id { get; set; } 
-
         [Required]
         public string TeacherName { get; set; }
 
@@ -29,6 +27,7 @@ namespace BookingPhongHoc.Dtos
 
     public class TeachersFields
     {
+        public string Id { get; set; }
         public Teachers Fields { get; set; }
     }
 

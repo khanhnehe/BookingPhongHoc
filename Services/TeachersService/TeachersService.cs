@@ -90,6 +90,103 @@ public class TeachersService : AirtableBaseService
         };
     }
 
+
+    public async Task ChangePassword(string id, string phoneNumber, string currentPassword, string newPassword)
+    {
+        var teachersData = await GetAllTeachers();
+        var teacher = teachersData.Records.FirstOrDefault(t => t.Id == id);
+
+        if (teacher == null)
+        {
+            throw new Exception("Không tìm thấy giáo viên với ID này");
+        }
+
+        if (teacher.Fields.PhoneNumber != phoneNumber)
+        {
+            throw new Exception("Số điện thoại không đúng");
+        }
+
+        // Kiểm tra mật khẩu hiện tại
+        var result = _passwordHasher.VerifyHashedPassword(teacher.Fields, teacher.Fields.Password, currentPassword);
+        if (result != PasswordVerificationResult.Success)
+        {
+            throw new Exception("Mật khẩu hiện tại không đúng");
+        }
+
+        teacher.Fields.Password = _passwordHasher.HashPassword(teacher.Fields, newPassword);
+
+        var record = new { records = new[] { new { id = teacher.Id, fields = teacher.Fields } } };
+        var url = GetUrl(); 
+
+        // Gửi yêu cầu cập nhật mật khẩu mới
+        var response = await SendJsonAsync(new HttpMethod("PATCH"), url, record);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception("Có lỗi xảy ra khi cập nhật mật khẩu");
+        }
+    }
+
+    public async Task<Teachers> UpdateTeacher(string id, Teachers input)
+    {
+        var teachersData = await GetAllTeachers();
+        var teacher = teachersData.Records.FirstOrDefault(t => t.Id == id);
+
+        if (teacher == null)
+        {
+            throw new Exception("Không tìm thấy giáo viên này");
+        }
+
+        // Kiểm tra xem số điện thoại đã tồn tại trong hệ thống hay chưa
+        if (teacher.Fields.PhoneNumber != input.PhoneNumber && await PhoneNumberExist(input.PhoneNumber))
+        {
+            throw new Exception("Số điện thoại đã tồn tại");
+        }
+
+        teacher.Fields.TeacherName = input.TeacherName;
+        teacher.Fields.PhoneNumber = input.PhoneNumber;
+        teacher.Fields.Email = input.Email;
+        teacher.Fields.Avatar = input.Avatar;
+
+        var record = new { records = new[] { new { id = teacher.Id, fields = teacher.Fields } } };
+        var url = GetUrl();
+
+        var response = await SendJsonAsync(new HttpMethod("PATCH"), url, record);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception("Có lỗi xảy ra khi cập nhật thông tin giáo viên");
+        }
+
+        return new Teachers
+        {
+            TeacherName = teacher.Fields.TeacherName,
+            PhoneNumber = teacher.Fields.PhoneNumber,
+            Email = teacher.Fields.Email,
+            Role = teacher.Fields.Role,
+            IsActive = teacher.Fields.IsActive,
+            Avatar = teacher.Fields.Avatar
+        };
+    }
+
+    public async Task DeleteTeacher(string id)
+    {
+        var teachersData = await GetAllTeachers();
+        var teacher = teachersData.Records.FirstOrDefault(t => t.Id == id);
+
+        if (teacher == null)
+        {
+            throw new Exception("Không tìm thấy giáo viên với ID này");
+        }
+
+        var url = GetUrl() + "/" + id;
+
+        var response = await SendAsync(new HttpMethod("DELETE"), url);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception("Có lỗi xảy ra khi xóa giáo viên");
+        }
+    }
+
+
     public async Task<string> SignIn(SignIn input)
     {
         var teachersData = await GetAllTeachers();
