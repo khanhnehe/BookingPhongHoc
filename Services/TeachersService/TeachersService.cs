@@ -27,7 +27,6 @@ public class TeachersService : AirtableBaseService
         _config = configuration;  // Khởi tạo biến này
     }
 
-    // Các phương thức khác của TeachersService
     public async Task<bool> PhoneNumberExist(string phoneNumber)
     {
         var teachersData = await GetAllTeachers();

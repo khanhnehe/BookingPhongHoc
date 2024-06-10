@@ -47,3 +47,15 @@ N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Namotion.Reflection.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\NJsonSchema.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\NJsonSchema.Annotations.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\NJsonSchema.NewtonsoftJson.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\NJsonSchema.Yaml.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\NSwag.Annotations.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\NSwag.AspNetCore.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\NSwag.Core.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\NSwag.Core.Yaml.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\NSwag.Generation.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\NSwag.Generation.AspNetCore.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\YamlDotNet.dll

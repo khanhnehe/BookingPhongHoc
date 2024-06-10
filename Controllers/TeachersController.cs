@@ -20,14 +20,23 @@ namespace BookingPhongHoc.Controllers
             _teachersService = teachersService;
             _logger = logger;
         }
-
+        [Authorize]
         [HttpGet("get-all-teachers")]
         public async Task<object> GetAllTeachers()
         {
             try
             {
-                var teachers = await _teachersService.GetAllTeachers();
-                return new {  teachers };
+                var teachersData = await _teachersService.GetAllTeachers();
+                var Getteachers = teachersData.Records.Select(record => new Teachers
+                {
+                    TeacherName = record.Fields.TeacherName,
+                    PhoneNumber = record.Fields.PhoneNumber,
+                    Email = record.Fields.Email,
+                    Role = record.Fields.Role,
+                    IsActive = record.Fields.IsActive,
+                    Avatar = record.Fields.Avatar
+                }).ToArray();
+                return new { teachers = Getteachers };
             }
             catch (ApiException ex)
             {
@@ -40,6 +49,8 @@ namespace BookingPhongHoc.Controllers
             }
         }
 
+
+        [Authorize]
         [HttpPost("create-teacher")]
         public async Task<object> CreateTeacher([FromBody] Teachers teacher)
         {
