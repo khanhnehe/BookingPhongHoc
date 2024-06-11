@@ -17,14 +17,14 @@ using System.IdentityModel.Tokens.Jwt;
 public class TeachersService : AirtableBaseService
 {
     private readonly PasswordHasher<Teachers> _passwordHasher;
-    private readonly IConfiguration _config;  // Thêm biến này
+    private readonly IConfiguration _config;  
 
     // Constructor của TeachersService, khởi tạo httpClientFactory, configuration, và passwordHasher
     public TeachersService(IHttpClientFactory httpClientFactory, IConfiguration configuration, PasswordHasher<Teachers> passwordHasher)
-        : base(httpClientFactory, configuration, configuration["Airtable:Tables:Teachers"]) // Gọi constructor của lớp cơ sở AirtableBaseService
+        : base(httpClientFactory, configuration, configuration["Airtable:Tables:Teachers"]) 
     {
         _passwordHasher = passwordHasher;
-        _config = configuration;  // Khởi tạo biến này
+        _config = configuration; 
     }
 
     public async Task<bool> PhoneNumberExist(string phoneNumber)
@@ -69,8 +69,8 @@ public class TeachersService : AirtableBaseService
         // Mã hóa mật khẩu trước khi gửi yêu cầu
         input.Password = _passwordHasher.HashPassword(input, input.Password);
 
-        var record = new { records = new[] { new { fields = input } } }; // Tạo object record chứa dữ liệu giáo viên
-        var url = GetUrl(); // Lấy URL từ lớp cơ sở
+        var record = new { records = new[] { new { fields = input } } }; 
+        var url = GetUrl(); 
 
         var response = await SendJsonAsync(HttpMethod.Post, url, record);
 
@@ -174,7 +174,7 @@ public class TeachersService : AirtableBaseService
 
         if (teacher == null)
         {
-            throw new Exception("Không tìm thấy giáo viên với ID này");
+            throw new Exception("Không tìm thấy giáo viên với này");
         }
 
         var url = GetUrl() + "/" + id;

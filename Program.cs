@@ -5,12 +5,15 @@ using System.Text;
 using AutoWrapper;
 using BookingPhongHoc.Dtos;
 using Microsoft.AspNetCore.Identity;
+using BookingPhongHoc.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddHttpClient<AirtableBaseService>();
 builder.Services.AddScoped<TeachersService>();
+builder.Services.AddScoped<RoomsService>();
+builder.Services.AddScoped<BookingsService>();
 builder.Services.AddScoped<PasswordHasher<Teachers>>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

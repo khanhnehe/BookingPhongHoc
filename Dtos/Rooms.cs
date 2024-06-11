@@ -1,15 +1,25 @@
-﻿namespace BookingPhongHoc.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookingPhongHoc.Dtos
 {
     public class Rooms
     {
-        public class Room
+        [Required]
+        public string RoomName { get; set; }
+        public int Capacity { get; set; }
+        public bool IsActive { get; set; } = true;
+
+        public string Description { get; set; }
+    }
+        public class RoomFields
         {
-            public string RoomName { get; set; }
             public string Id { get; set; }
-            public int Capacity { get; set; }
-            public string Description { get; set; }
-            public List<string> Booking { get; set; }
+            public Rooms Fields { get; set; }
         }
 
+        public class RoomsData
+        {
+            public RoomFields[] Records { get; set; }
+        }
     }
-}
+
