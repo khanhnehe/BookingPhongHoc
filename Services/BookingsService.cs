@@ -39,29 +39,49 @@ namespace BookingPhongHoc.Services
             return bookingsData;
         }
 
-        public async Task<string> GetTeacherName(string teacherId)
+        public async Task<Rooms> GetRoomById(string roomId)
         {
-            // Tạo URL cho yêu cầu API
-            var url = GetUrl(teacherId);
-
-            // Thực hiện yêu cầu API
-            var response = await SendAsync(HttpMethod.Get, url);
-
-            // Đọc và phân tích cú pháp dữ liệu trả về
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var teacherData = JsonConvert.DeserializeObject<TeachersData>(responseContent);
-
-            // Kiểm tra xem dữ liệu giáo viên có tồn tại không
-            if (teacherData?.Records[0]?.Fields?.TeacherName == null)
+            try
             {
-                throw new Exception("Không thể lấy thông tin giáo viên");
+                var url = GetUrl(roomId);
+                var response = await SendAsync(HttpMethod.Get, url, null);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Có lỗi xảy ra khi lấy thông tin phòng");
+                }
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var room = JsonConvert.DeserializeObject<RoomFields>(responseContent);
+                return room.Fields;
             }
-
-            return teacherData.Records[0].Fields.TeacherName;
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
 
 
+        public async Task<Teachers> GetTeacherById(string teacherId)
+        {
+            try
+            {
+                var url = GetUrl(teacherId);
+                var response = await SendAsync(HttpMethod.Get, url, null);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Có lỗi xảy ra khi lấy thông tin phòng");
+                }
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var teacher = JsonConvert.DeserializeObject<TeachersFields>(responseContent);
+                return teacher.Fields;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+        }
         public async Task<Bookings> CreateBooking(Bookings input)
         {
             // Lấy tất cả các lịch đặt phòng
@@ -86,19 +106,9 @@ namespace BookingPhongHoc.Services
             {
                 throw new Exception($"Giáo viên đã đặt phòng khác từ {existingTeacherBooking.Fields.StartTime} đến {existingTeacherBooking.Fields.EndTime}");
             }
-
+           
             //input.TeacherName = teacher.TeacherName;
-            // Lấy tên giáo viên từ Airtable API
-            var teacherName = await GetTeacherName(input.TeacherId);
-
-            // Kiểm tra xem teacherName có phải là null không
-            if (teacherName == null)
-            {
-                throw new Exception("Không thể lấy tên giáo viên");
-            }
-
-            // Gán tên giáo viên cho input.TeacherName
-            input.TeacherName = new string[] { teacherName };
+            input.TeacherName = new string[] { input.TeacherId };
 
 
 
