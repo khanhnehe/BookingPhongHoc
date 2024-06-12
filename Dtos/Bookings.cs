@@ -1,4 +1,6 @@
-﻿namespace BookingPhongHoc.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookingPhongHoc.Dtos
 {
     public class Bookings
     {
@@ -10,11 +12,12 @@
         public string RoomId { get; set; }
         public string TeacherId { get; set; }
 
-        //public string? RoomName { get; set; } 
-        //public int? Capacity { get; set; } 
-        //public string? TeacherName { get; set; } 
-    }
+        //public string? RoomName { get; set; }
+        //public int? Capacity { get; set; }
+        //public string? TeacherName { get; set; }
 
+        public string[]? TeacherName { get; set; }
+    }
     public class BookingFields
     {
         public string Id { get; set; }

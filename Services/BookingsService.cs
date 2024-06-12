@@ -39,6 +39,29 @@ namespace BookingPhongHoc.Services
             return bookingsData;
         }
 
+        public async Task<string> GetTeacherName(string teacherId)
+        {
+            // Tạo URL cho yêu cầu API
+            var url = GetUrl(teacherId);
+
+            // Thực hiện yêu cầu API
+            var response = await SendAsync(HttpMethod.Get, url);
+
+            // Đọc và phân tích cú pháp dữ liệu trả về
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var teacherData = JsonConvert.DeserializeObject<TeachersData>(responseContent);
+
+            // Kiểm tra xem dữ liệu giáo viên có tồn tại không
+            if (teacherData?.Records[0]?.Fields?.TeacherName == null)
+            {
+                throw new Exception("Không thể lấy thông tin giáo viên");
+            }
+
+            return teacherData.Records[0].Fields.TeacherName;
+        }
+
+
+
         public async Task<Bookings> CreateBooking(Bookings input)
         {
             // Lấy tất cả các lịch đặt phòng
@@ -64,6 +87,21 @@ namespace BookingPhongHoc.Services
                 throw new Exception($"Giáo viên đã đặt phòng khác từ {existingTeacherBooking.Fields.StartTime} đến {existingTeacherBooking.Fields.EndTime}");
             }
 
+            //input.TeacherName = teacher.TeacherName;
+            // Lấy tên giáo viên từ Airtable API
+            var teacherName = await GetTeacherName(input.TeacherId);
+
+            // Kiểm tra xem teacherName có phải là null không
+            if (teacherName == null)
+            {
+                throw new Exception("Không thể lấy tên giáo viên");
+            }
+
+            // Gán tên giáo viên cho input.TeacherName
+            input.TeacherName = new string[] { teacherName };
+
+
+
             // Nếu không có lỗi, tạo một lịch đặt phòng mới
             var record = new { records = new[] { new { fields = input } } };
             var url = GetUrl();
@@ -79,6 +117,7 @@ namespace BookingPhongHoc.Services
 
             return createdBooking.Fields;
         }
+
 
 
 
