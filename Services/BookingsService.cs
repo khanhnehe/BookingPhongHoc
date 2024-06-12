@@ -39,50 +39,6 @@ namespace BookingPhongHoc.Services
             return bookingsData;
         }
 
-        public async Task<Rooms> GetRoomById(string roomId)
-        {
-            try
-            {
-                var url = GetUrl(roomId); 
-                var response = await SendAsync(HttpMethod.Get, url, null);
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception("Có lỗi xảy ra khi lấy thông tin phòng");
-                }
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var room = JsonConvert.DeserializeObject<RoomFields>(responseContent);
-                return room.Fields;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-        }
-
-
-
-        public async Task<Teachers> GetTeacherById(string teacherId)
-        {
-            try
-            {
-                var url = GetUrl(teacherId); 
-                var response = await SendAsync(HttpMethod.Get, url, null);
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception("Có lỗi xảy ra khi lấy thông tin phòng");
-                }
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var teacher = JsonConvert.DeserializeObject<TeachersFields>(responseContent);
-                return teacher.Fields;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-        }
-
         public async Task<Bookings> CreateBooking(Bookings input)
         {
             // Lấy tất cả các lịch đặt phòng
@@ -105,17 +61,8 @@ namespace BookingPhongHoc.Services
 
             if (existingTeacherBooking != null)
             {
-                throw new Exception($"Giáo viên đã đặt một phòng khác từ {existingTeacherBooking.Fields.StartTime} đến {existingTeacherBooking.Fields.EndTime}");
+                throw new Exception($"Giáo viên đã đặt phòng khác từ {existingTeacherBooking.Fields.StartTime} đến {existingTeacherBooking.Fields.EndTime}");
             }
-
-            // Get the room and teacher details
-            var room = await GetRoomById(input.RoomId);
-            var teacher = await GetTeacherById(input.TeacherId);
-
-            // Add the room and teacher details to the booking
-            input.RoomName = room.RoomName;
-            input.Capacity = room.Capacity;
-            input.TeacherName = teacher.TeacherName;
 
             // Nếu không có lỗi, tạo một lịch đặt phòng mới
             var record = new { records = new[] { new { fields = input } } };
@@ -132,7 +79,6 @@ namespace BookingPhongHoc.Services
 
             return createdBooking.Fields;
         }
-
 
 
 
