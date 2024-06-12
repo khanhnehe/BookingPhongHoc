@@ -43,6 +43,20 @@ namespace BookingPhongHoc.Controllers
             }
         }
 
+        [HttpGet("rooms/{roomId}")]
+        public async Task<IActionResult> GetRoomById(string roomId)
+        {
+            var room = await _bookingsService.GetRoomById(roomId);
+            return Ok(room);
+        }
+
+        [HttpGet("teachers/{teacherId}")]
+        public async Task<IActionResult> GetTeacherById(string teacherId)
+        {
+            var teacher = await _bookingsService.GetTeacherById(teacherId);
+            return Ok(teacher);
+        }
+
         [Authorize]
         [HttpPost("create-booking")]
 

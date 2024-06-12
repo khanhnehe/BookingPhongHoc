@@ -10,9 +10,9 @@
         public string RoomId { get; set; }
         public string TeacherId { get; set; }
 
-        //public string? RoomName { get; set; } 
-        //public int? Capacity { get; set; } 
-        //public string? TeacherName { get; set; } 
+        public string? RoomName { get; set; }
+        public int? Capacity { get; set; }
+        public string? TeacherName { get; set; }
     }
 
     public class BookingFields
