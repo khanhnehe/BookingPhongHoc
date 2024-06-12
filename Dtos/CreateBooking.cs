@@ -2,7 +2,7 @@
 
 namespace BookingPhongHoc.Dtos
 {
-    public class Bookings
+    public class CreateBooking
     {
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
@@ -15,18 +15,9 @@ namespace BookingPhongHoc.Dtos
         //public string? RoomName { get; set; }
         //public int? Capacity { get; set; }
         //public string? TeacherName { get; set; }
-        public string? NameOfTeacher { get; set; }
 
         public string[]? IdOfTeacher { get; set; }
     }
-    public class BookingFields
-    {
-        public string Id { get; set; }
-        public Bookings Fields { get; set; }
-    }
+    
 
-    public class BookingsData
-    {
-        public BookingFields[] Records { get; set; }
-    }
 }

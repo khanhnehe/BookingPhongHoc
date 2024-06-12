@@ -47,7 +47,7 @@ namespace BookingPhongHoc.Controllers
         [Authorize]
         [HttpPost("create-booking")]
 
-        public async Task<IActionResult> CreateBooking([FromBody] Bookings booking)
+        public async Task<IActionResult> CreateBooking([FromBody] CreateBooking booking)
         {
             try
             {

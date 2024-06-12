@@ -29,60 +29,8 @@ namespace BookingPhongHoc.Services
             return bookingsData;
         }
 
-        //
-        public async Task<BookingsData> GetBookingsByRoomAndTime(string roomId, DateTime startTime, DateTime endTime)
-        {
-            var url = GetUrl().SetQueryParam("filterByFormula", $"AND({roomId} = RoomId, {startTime} >= StartTime, {endTime} <= EndTime)");
-            var response = await SendAsync(HttpMethod.Get, url);
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var bookingsData = JsonConvert.DeserializeObject<BookingsData>(responseContent);
-            return bookingsData;
-        }
 
-        public async Task<Rooms> GetRoomById(string roomId)
-        {
-            try
-            {
-                var url = GetUrl(roomId);
-                var response = await SendAsync(HttpMethod.Get, url, null);
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception("Có lỗi xảy ra khi lấy thông tin phòng");
-                }
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var room = JsonConvert.DeserializeObject<RoomFields>(responseContent);
-                return room.Fields;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-        }
-
-
-
-        public async Task<Teachers> GetTeacherById(string teacherId)
-        {
-            try
-            {
-                var url = GetUrl(teacherId);
-                var response = await SendAsync(HttpMethod.Get, url, null);
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception("Có lỗi xảy ra khi lấy thông tin phòng");
-                }
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var teacher = JsonConvert.DeserializeObject<TeachersFields>(responseContent);
-                return teacher.Fields;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-        }
-        public async Task<Bookings> CreateBooking(Bookings input)
+        public async Task<Bookings> CreateBooking(CreateBooking input)
         {
             // Lấy tất cả các lịch đặt phòng
             var allBookings = await GetAllBookings();
@@ -106,9 +54,12 @@ namespace BookingPhongHoc.Services
             {
                 throw new Exception($"Giáo viên đã đặt phòng khác từ {existingTeacherBooking.Fields.StartTime} đến {existingTeacherBooking.Fields.EndTime}");
             }
-           
-            //input.TeacherName = teacher.TeacherName;
-            input.TeacherName = new string[] { input.TeacherId };
+
+            
+            
+            // Gán tên giáo viên cho input.TeacherName
+            // Gán ID giáo viên cho input.TeacherName
+            input.IdOfTeacher = new string[] { input.TeacherId };
 
 
 
@@ -125,12 +76,9 @@ namespace BookingPhongHoc.Services
             var responseContent = await response.Content.ReadAsStringAsync();
             var createdBooking = JsonConvert.DeserializeObject<BookingsData>(responseContent).Records[0];
 
+
             return createdBooking.Fields;
         }
-
-
-
-
 
     }
 }
