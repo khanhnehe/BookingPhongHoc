@@ -23,26 +23,51 @@ namespace BookingPhongHoc.Controllers
             _logger = logger;
         }
 
+        [HttpGet("get-teacher-role")]
+        public async Task<IActionResult> GetTeacherById([FromQuery] string teacherId)
+        {
+            try
+            {
+                _logger.LogInformation($"Fetching role for teacher with ID: {teacherId}");
+                var teacherRole = await _bookingsService.GetTeacherRoleById(teacherId);
+                return Ok(new { teacherRole });
+            }
+            catch (ApiException ex)
+            {
+                _logger.LogError($"ApiException: {ex.Message}");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception: {ex.Message}");
+                return BadRequest(new { message = $"Có lỗi xảy ra: {ex.Message}" });
+            }
+        }
+
+
         [Authorize]
         [HttpGet("get-all-bookings")]
         public async Task<IActionResult> GetAllRooms()
         {
             try
             {
+                _logger.LogInformation("Fetching all bookings.");
                 var bookingsData = await _bookingsService.GetAllBookings();
                 return Ok(new { bookingsData });
             }
             catch (ApiException ex)
             {
+                _logger.LogError($"ApiException: {ex.Message}");
                 throw new ApiException($"{ex.Message}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                _logger.LogError($"Exception: {ex.Message}");
                 throw new ApiException($"Có lỗi xảy ra: {ex.Message}");
             }
         }
-        
+
+
 
         [Authorize]
         [HttpPost("create-booking")]

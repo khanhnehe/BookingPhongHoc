@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BookingPhongHoc")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9bc4edebb0e2659302eb8b99abf29d32d8198d19")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab8198649efa010fed59bba211db692dfda1f316")]
 [assembly: System.Reflection.AssemblyProductAttribute("BookingPhongHoc")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BookingPhongHoc")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

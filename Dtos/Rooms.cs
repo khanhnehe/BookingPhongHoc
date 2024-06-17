@@ -14,6 +14,8 @@ namespace BookingPhongHoc.Dtos
         public class RoomFields
         {
             public string Id { get; set; }
+            public DateTime CreatedTime { get; set; }
+
             public Rooms Fields { get; set; }
         }
 

@@ -1,9 +1,12 @@
 ﻿using AutoWrapper.Wrappers;
 using BookingPhongHoc.Dtos;
+using BookingPhongHoc.Repositories;
+using BookingPhongHoc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookingPhongHoc.Controllers
@@ -14,11 +17,28 @@ namespace BookingPhongHoc.Controllers
     {
         private readonly TeachersService _teachersService;
         private readonly ILogger<TeachersController> _logger;
+        private readonly ITeachersRepository _teachersRepository;
 
-        public TeachersController(TeachersService teachersService, ILogger<TeachersController> logger)
+        public TeachersController(TeachersService teachersService, ILogger<TeachersController> logger, ITeachersRepository teachersRepository)
         {
             _teachersService = teachersService;
             _logger = logger;
+            _teachersRepository = teachersRepository;
+        }
+
+        [HttpGet("GetTeacherRole/{teacherId}")]
+        public async Task<IActionResult> GetTeacherRole(string teacherId)
+        {
+            var role = await _teachersRepository.GetTeacherRoleById(teacherId);
+
+            if (role.HasValue)
+            {
+                return Ok(role.Value);
+            }
+            else
+            {
+                return NotFound("Không tìm thấy vai trò cho giáo viên này.");
+            }
         }
 
         [Authorize]
@@ -51,6 +71,26 @@ namespace BookingPhongHoc.Controllers
             }
         }
 
+        [HttpGet("Role/{teacherId}")]
+        public async Task<IActionResult> GetTeacherRoleById(string teacherId)
+        {
+            try
+            {
+                var role = await _teachersService.GetTeacherRoleById(teacherId);
+                if (role != null)
+                {
+                    return Ok(role);
+                }
+                else
+                {
+                    return NotFound($"Không tìm thấy Role cho giáo viên với ID: {teacherId}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
         [Authorize]
         [HttpPost("create-teacher")]
@@ -71,6 +111,7 @@ namespace BookingPhongHoc.Controllers
                 throw new ApiException($"Có lỗi xảy ra: {ex.Message}");
             }
         }
+
         [Authorize]
         [HttpPut("change-password/{id}")]
         public async Task<IActionResult> ChangePassword(string id, [FromBody] ChangePassword changePassword)
@@ -130,7 +171,6 @@ namespace BookingPhongHoc.Controllers
                 throw new ApiException($"Có lỗi xảy ra: {ex.Message}");
             }
         }
-
 
         [AllowAnonymous]
         [HttpPost("sign-in")]

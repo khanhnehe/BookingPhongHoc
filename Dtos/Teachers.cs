@@ -28,6 +28,8 @@ namespace BookingPhongHoc.Dtos
     public class TeachersFields
     {
         public string Id { get; set; }
+        public DateTime CreatedTime { get; set; }
+
         public Teachers Fields { get; set; }
     }
 

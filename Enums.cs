@@ -6,11 +6,20 @@ namespace BookingPhongHoc
     {
         public enum Role
         {
-            gvtg = 0,
+            gvtg = 1,
 
-            gvt = 1,
+            gvt = 2,
 
-            admin = 2
+            admin = 3
+        }
+
+        public enum StatusBooking
+        {
+            pending = 1,
+
+            approved = 2,
+
+            cancel = 3
         }
     }
 }

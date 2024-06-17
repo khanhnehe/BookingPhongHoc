@@ -59,3 +59,8 @@ N:\BookingPhongHoc\bin\Debug\net6.0\NSwag.Core.Yaml.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\NSwag.Generation.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\NSwag.Generation.AspNetCore.dll
 N:\BookingPhongHoc\bin\Debug\net6.0\YamlDotNet.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.Extensions.Caching.Memory.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\Microsoft.Extensions.DependencyInjection.dll
+N:\BookingPhongHoc\bin\Debug\net6.0\System.Diagnostics.DiagnosticSource.dll

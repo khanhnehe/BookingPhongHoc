@@ -39,6 +39,18 @@ public class TeachersService : AirtableBaseService
         }
         return false;
     }
+    public async Task<string> GetTeacherRoleById(string teacherId)
+    {
+        var teachersData = await GetAllTeachers(); 
+        foreach (var teacher in teachersData.Records)
+        {
+            if (teacher.Id == teacherId)
+            {
+                return teacher.Fields.Role.ToString(); 
+            }
+        }
+        return null; 
+    }
 
     public async Task<TeachersData> GetAllTeachers()
     {
@@ -46,6 +58,12 @@ public class TeachersService : AirtableBaseService
         var response = await SendAsync(HttpMethod.Get, url);
         var responseContent = await response.Content.ReadAsStringAsync(); // Đọc nội dung phản hồi dưới dạng chuỗi
         var teachersData = JsonConvert.DeserializeObject<TeachersData>(responseContent); // Chuyển đổi chuỗi JSON thành đối tượng TeachersData
+        if (teachersData != null && teachersData.Records != null)
+        {
+            teachersData.Records = teachersData.Records
+                                .OrderByDescending(r => r.CreatedTime)
+                                .ToArray();
+        }
         return teachersData;
     }
 

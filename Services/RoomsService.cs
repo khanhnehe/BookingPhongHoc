@@ -25,8 +25,17 @@ namespace BookingPhongHoc.Services
             var response = await SendAsync(HttpMethod.Get, url);
             var responseContent = await response.Content.ReadAsStringAsync();
             var roomsData = JsonConvert.DeserializeObject<RoomsData>(responseContent);
+
+            if (roomsData != null && roomsData.Records != null)
+            {
+                roomsData.Records = roomsData.Records
+                                    .OrderByDescending(r => r.CreatedTime)
+                                    .ToArray();
+            }
+
             return roomsData;
         }
+
 
         public async Task<bool> RoomExist(string roomName)
         {

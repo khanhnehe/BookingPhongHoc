@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -6,22 +6,37 @@ using AutoWrapper;
 using BookingPhongHoc.Dtos;
 using Microsoft.AspNetCore.Identity;
 using BookingPhongHoc.Services;
+using BookingPhongHoc.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddHttpClient<AirtableBaseService>();
+// Thêm các dịch vụ vào container
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<ITeachersRepository, Repository>();
+builder.Services.AddScoped<Repository>();
+
+// Đăng ký AirtableBaseService với các tham số thích hợp
+builder.Services.AddScoped<AirtableBaseService>(sp =>
+{
+    var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    return new AirtableBaseService(httpClientFactory, configuration, configuration["Airtable:Tables:Bookings"]);
+});
+
 builder.Services.AddScoped<TeachersService>();
 builder.Services.AddScoped<RoomsService>();
 builder.Services.AddScoped<BookingsService>();
 builder.Services.AddScoped<PasswordHasher<Teachers>>();
 builder.Services.AddControllers();
+// Các dịch vụ khác và cấu hình JWT như bạn đã làm
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
 
-    // Add JWT Authentication for Swagger
+    // Thêm JWT Authentication cho Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -48,7 +63,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Configure JWT Authentication
+// Cấu hình JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
@@ -74,7 +89,7 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Cấu hình HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

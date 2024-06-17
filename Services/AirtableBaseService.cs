@@ -29,12 +29,12 @@ public class AirtableBaseService
         return client;
     }
 
-    protected string GetUrl(string id = null)
+    public string GetUrl(string id = null)
     {
         return id == null ? $"{BaseUrl}/{_baseId}/{_tableId}" : $"{BaseUrl}/{_baseId}/{_tableId}/{id}";
     }
 
-    protected async Task<HttpResponseMessage> SendAsync(HttpMethod method, string url, HttpContent content = null)
+    public async Task<HttpResponseMessage> SendAsync(HttpMethod method, string url, HttpContent content = null)
     {
         var client = CreateClient();
         var request = new HttpRequestMessage(method, url) { Content = content };
