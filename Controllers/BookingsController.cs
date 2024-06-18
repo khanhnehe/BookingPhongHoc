@@ -85,5 +85,26 @@ namespace BookingPhongHoc.Controllers
             }
         }
 
+        [HttpGet("status/pending")]
+        public async Task<IActionResult> GetPendingBookings()
+        {
+            try
+            {
+                _logger.LogInformation("Fetching pending bookings.");
+                var pendingBookings = await _bookingsService.GetStatusPending();
+                return Ok(new { pendingBookings });
+            }
+            catch (ApiException ex)
+            {
+                _logger.LogError($"ApiException: {ex.Message}");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception: {ex.Message}");
+                return BadRequest(new { message = $"Có lỗi xảy ra: {ex.Message}" });
+            }
+        }
+
     }
 }

@@ -17,29 +17,29 @@ namespace BookingPhongHoc.Controllers
     {
         private readonly TeachersService _teachersService;
         private readonly ILogger<TeachersController> _logger;
-        private readonly ITeachersRepository _teachersRepository;
+        //private readonly ITeachersRepository _teachersRepository;
 
-        public TeachersController(TeachersService teachersService, ILogger<TeachersController> logger, ITeachersRepository teachersRepository)
+        public TeachersController(TeachersService teachersService, ILogger<TeachersController> logger)
         {
             _teachersService = teachersService;
             _logger = logger;
-            _teachersRepository = teachersRepository;
+            //_teachersRepository = teachersRepository;
         }
 
-        [HttpGet("GetTeacherRole/{teacherId}")]
-        public async Task<IActionResult> GetTeacherRole(string teacherId)
-        {
-            var role = await _teachersRepository.GetTeacherRoleById(teacherId);
+        //[HttpGet("GetTeacherRole/{teacherId}")]
+        //public async Task<IActionResult> GetTeacherRole(string teacherId)
+        //{
+        //    var role = await _teachersRepository.GetTeacherRoleById(teacherId);
 
-            if (role.HasValue)
-            {
-                return Ok(role.Value);
-            }
-            else
-            {
-                return NotFound("Không tìm thấy vai trò cho giáo viên này.");
-            }
-        }
+        //    if (role.HasValue)
+        //    {
+        //        return Ok(role.Value);
+        //    }
+        //    else
+        //    {
+        //        return NotFound("Không tìm thấy vai trò cho giáo viên này.");
+        //    }
+        //}
 
         [Authorize]
         [HttpGet("get-all-teachers")]

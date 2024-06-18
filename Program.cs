@@ -13,8 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Thêm các dịch vụ vào container
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<ITeachersRepository, Repository>();
-builder.Services.AddScoped<Repository>();
+//builder.Services.AddScoped<ITeachersRepository, Repository>();
+// Đăng ký IBookingRepository và BookingRepository
+builder.Services.AddScoped<IBookingRepository, BookingRepository>(); // Thêm dòng này
+//builder.Services.AddScoped<Repository>();
 
 // Đăng ký AirtableBaseService với các tham số thích hợp
 builder.Services.AddScoped<AirtableBaseService>(sp =>

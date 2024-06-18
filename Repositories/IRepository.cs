@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
-using static BookingPhongHoc.Enums;
+using BookingPhongHoc.Dtos;
 
 namespace BookingPhongHoc.Repositories
 {
-    public interface ITeachersRepository
+    public interface IBookingRepository
     {
-        Task<Role?> GetTeacherRoleById(string teacherId);
+        Task<BookingFields[]> GetAllBookingsAsync();
+        Task<BookingFields[]> GetPendingBookingsAsync();
     }
 }

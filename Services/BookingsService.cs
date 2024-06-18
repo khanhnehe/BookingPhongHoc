@@ -6,52 +6,33 @@ using Microsoft.Extensions.Logging;
 using BookingPhongHoc.Dtos;
 using BookingPhongHoc.Repositories;
 using static BookingPhongHoc.Enums;
+using System.Linq;
 
 namespace BookingPhongHoc.Services
 {
     public class BookingsService : AirtableBaseService
     {
-        private readonly Repository _repositories;
+        private readonly IBookingRepository _bookingRepository;
         private readonly ILogger<BookingsService> _logger;
         private readonly IConfiguration _config;
 
         // Constructor khởi tạo BookingsService với các tham số cần thiết
-        public BookingsService(IHttpClientFactory httpClientFactory, IConfiguration configuration, Repository repositories, ILogger<BookingsService> logger)
+        public BookingsService(IHttpClientFactory httpClientFactory, IConfiguration configuration, IBookingRepository bookingRepository, ILogger<BookingsService> logger)
            : base(httpClientFactory, configuration, configuration["Airtable:Tables:Bookings"])
         {
-            _repositories = repositories;
+            _bookingRepository = bookingRepository;
             _logger = logger;
             _config = configuration;
-
         }
 
         // Phương thức lấy tất cả các lịch đặt phòng
-        public async Task<BookingsData> GetAllBookings()
+        public async Task<BookingFields[]> GetAllBookings()
         {
-            try
-            {
-                var url = GetUrl();
-                _logger.LogInformation($"Fetching bookings from URL: {url}");
-                var response = await SendAsync(HttpMethod.Get, url);
-                var responseContent = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Response received: {responseContent}");
-                var bookingsData = JsonConvert.DeserializeObject<BookingsData>(responseContent);
-                if (bookingsData != null && bookingsData.Records != null)
-                {
-                    bookingsData.Records = bookingsData.Records
-                                        .OrderByDescending(r => r.CreatedTime)
-                                        .ToArray();
-                }
-                return bookingsData;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"An error occurred in GetAllBookings: {ex.Message}");
-                throw;
-            }
+            return await _bookingRepository.GetAllBookingsAsync();
         }
 
-        public async Task<int> GetTeacherRoleById(string teacherId)
+        // Phương thức lấy thông tin giáo viên theo ID
+        public async Task<TeachersFields?> GetTeacherById(string teacherId)
         {
             try
             {
@@ -62,7 +43,7 @@ namespace BookingPhongHoc.Services
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return -1; 
+                    throw new Exception("Không thể lấy dữ liệu giáo viên từ Airtable");
                 }
 
                 var content = await response.Content.ReadAsStringAsync();
@@ -71,24 +52,33 @@ namespace BookingPhongHoc.Services
 
                 var teacher = teachersData?.Records?.FirstOrDefault(t => t.Id == teacherId);
 
-                if (teacher != null && Enum.TryParse<Role>(teacher.Fields.Role.ToString(), out var roleEnum))
+                if (teacher != null)
                 {
-                    _logger.LogInformation($"Found teacher: {JsonConvert.SerializeObject(teacher)}");
-                    return (int)roleEnum; 
+                    return teacher;
                 }
 
-                _logger.LogWarning($"No teacher found with ID: {teacherId}");
+                _logger.LogWarning($"Không tìm thấy giáo viên với ID: {teacherId}");
+                return null;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred while fetching teacher information: {ex.Message}");
+                _logger.LogError($"Đã xảy ra lỗi khi lấy thông tin giáo viên: {ex.Message}");
+                return null;
             }
-            return -1; 
         }
 
+        // Phương thức lấy vai trò của giáo viên theo ID
+        public async Task<int> GetTeacherRoleById(string teacherId)
+        {
+            var teacher = await GetTeacherById(teacherId);
+            if (teacher != null && Enum.TryParse<Role>(teacher.Fields.Role.ToString(), out var roleEnum))
+            {
+                return (int)roleEnum;
+            }
+            return -1;
+        }
 
-
-
+        // Phương thức tạo lịch đặt phòng
         public async Task<Bookings> CreateBooking(CreateBooking input)
         {
             if (input.EndTime <= input.StartTime)
@@ -99,30 +89,27 @@ namespace BookingPhongHoc.Services
             var allBookings = await GetAllBookings();
 
             // Kiểm tra xem có lịch đặt phòng nào cho phòng này trong khoảng thời gian yêu cầu không
-            var existingRoomBooking = allBookings.Records.FirstOrDefault(b => b.Fields.RoomId == input.RoomId
+            var existingRoomBooking = allBookings.FirstOrDefault(b => b.Fields.RoomId == input.RoomId
                 && ((input.StartTime >= b.Fields.StartTime && input.StartTime <= b.Fields.EndTime)
                     || (input.EndTime >= b.Fields.StartTime && input.EndTime <= b.Fields.EndTime)));
 
             if (existingRoomBooking != null)
             {
-                // Thêm kiểm tra trạng thái đặt phòng là approved
-                if (existingRoomBooking.Fields.StatusBooking == 2)
+                if (existingRoomBooking.Fields.StatusBooking == (int)StatusBooking.approved)
                 {
-                    throw new Exception($"Bạn không thể đặt lịch vì phòng này đã được đặt trước từ {existingRoomBooking.Fields.StartTime} đến {existingRoomBooking.Fields.EndTime}");
+                    throw new Exception($"Phòng đã được đặt từ {existingRoomBooking.Fields.StartTime} đến {existingRoomBooking.Fields.EndTime}");
                 }
             }
 
-            // Tương tự, kiểm tra xem giáo viên này đã đặt phòng nào khác trong khoảng thời gian yêu cầu không
-            var existingTeacherBooking = allBookings.Records.FirstOrDefault(b => b.Fields.TeacherId == input.TeacherId
+            var existingTeacherBooking = allBookings.FirstOrDefault(b => b.Fields.TeacherId == input.TeacherId
                 && ((input.StartTime >= b.Fields.StartTime && input.StartTime <= b.Fields.EndTime)
                     || (input.EndTime >= b.Fields.StartTime && input.EndTime <= b.Fields.EndTime)));
 
             if (existingTeacherBooking != null)
             {
-                // Thêm kiểm tra trạng thái đặt phòng là approved
-                if (existingTeacherBooking.Fields.StatusBooking == 2)
+                if (existingTeacherBooking.Fields.StatusBooking == (int)StatusBooking.approved)
                 {
-                    throw new Exception($"Giáo viên đã đặt phòng khác từ {existingTeacherBooking.Fields.StartTime} đến {existingTeacherBooking.Fields.EndTime} với trạng thái đã được phê duyệt");
+                    throw new Exception($"Giáo viên đã đặt phòng khác từ {existingTeacherBooking.Fields.StartTime} đến {existingTeacherBooking.Fields.EndTime}");
                 }
             }
 
@@ -131,24 +118,21 @@ namespace BookingPhongHoc.Services
 
             var teacherRole = await GetTeacherRoleById(input.TeacherId);
 
-            // Chuyển đổi teacherRole từ chuỗi sang số
             switch (teacherRole)
             {
                 case 1:
-                    input.StatusBooking = Enums.StatusBooking.pending;
+                    input.StatusBooking = StatusBooking.pending;
                     break;
                 case 2:
                 case 3:
-                    input.StatusBooking = Enums.StatusBooking.approved;
+                    input.StatusBooking = StatusBooking.approved;
                     break;
             }
 
-            // Tạo một record mới để gửi đi
             var record = new { records = new[] { new { fields = input } } };
-            // Lấy URL để gửi request
             var url = GetUrl();
 
-            var response = await SendJsonAsync(new HttpMethod("POST"), url, record);
+            var response = await SendJsonAsync(HttpMethod.Post, url, record);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Có lỗi xảy ra khi tạo lịch đặt phòng");
@@ -160,6 +144,11 @@ namespace BookingPhongHoc.Services
             return createdBooking.Fields;
         }
 
-
+        // Phương thức lấy danh sách đặt phòng với trạng thái "pending"
+        public async Task<BookingFields[]> GetStatusPending()
+        {
+            var allBookings = await GetAllBookings();
+            return allBookings.Where(b => b.Fields.StatusBooking == (int)StatusBooking.pending).ToArray();
+        }
     }
 }
