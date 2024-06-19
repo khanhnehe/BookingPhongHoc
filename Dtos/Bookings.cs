@@ -1,12 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using static BookingPhongHoc.Enums;
 
 namespace BookingPhongHoc.Dtos
 {
     public class Bookings
     {
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        private DateTime _startTime;
+        private DateTime _endTime;
+
+        public DateTime StartTime
+        {
+            get => _startTime;
+            set => _startTime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
+
+        public DateTime EndTime
+        {
+            get => _endTime;
+            set => _endTime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
 
         public int? StatusBooking { get; set; }
 
@@ -18,12 +31,12 @@ namespace BookingPhongHoc.Dtos
 
         public string[]? IdOfRoom { get; set; }
         public string? NameOfRoom { get; set; }
-
     }
+
     public class BookingFields
     {
         public string Id { get; set; }
-        public DateTime  CreatedTime  { get; set; }
+        public DateTime CreatedTime { get; set; }
         public Bookings Fields { get; set; }
     }
 

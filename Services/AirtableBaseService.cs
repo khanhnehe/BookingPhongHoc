@@ -49,7 +49,7 @@ public class AirtableBaseService
         return response;
     }
 
-    protected async Task<HttpResponseMessage> SendJsonAsync(HttpMethod method, string url, object record)
+    public async Task<HttpResponseMessage> SendJsonAsync(HttpMethod method, string url, object record)
     {
         var json = JsonConvert.SerializeObject(record);
         var data = new StringContent(json, Encoding.UTF8, "application/json");

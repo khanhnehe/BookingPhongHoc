@@ -68,7 +68,6 @@ namespace BookingPhongHoc.Controllers
         }
 
 
-
         [Authorize]
         [HttpPost("create-booking")]
 
@@ -103,6 +102,28 @@ namespace BookingPhongHoc.Controllers
             {
                 _logger.LogError($"Exception: {ex.Message}");
                 return BadRequest(new { message = $"Có lỗi xảy ra: {ex.Message}" });
+            }
+        }
+
+        [Authorize]
+        [HttpPost("update-booking-status")]
+        public async Task<IActionResult> UpdateBookingStatus([FromQuery] string bookingId, [FromQuery] string action)
+        {
+            try
+            {
+                _logger.LogInformation($"Updating booking status for booking ID: {bookingId} with action: {action}");
+                await _bookingsService.UpdateBookingStatus(bookingId, action);
+                return Ok(new { message = "Cập nhật trạng thái booking thành công" });
+            }
+            catch (ApiException ex)
+            {
+                _logger.LogError($"ApiException: {ex.Message}");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception: {ex.Message}");
+                return BadRequest(new { message = ex.Message });
             }
         }
 

@@ -31,7 +31,7 @@ namespace BookingPhongHoc.Services
             return await _bookingRepository.GetAllBookingsAsync();
         }
 
-        // Phương thức lấy thông tin giáo viên theo ID
+        // lấy info teacher theo ID
         public async Task<TeachersFields?> GetTeacherById(string teacherId)
         {
             try
@@ -57,7 +57,7 @@ namespace BookingPhongHoc.Services
                     return teacher;
                 }
 
-                _logger.LogWarning($"Không tìm thấy giáo viên với ID: {teacherId}");
+                _logger.LogWarning($"Không tìm thấy giáo viên");
                 return null;
             }
             catch (Exception ex)
@@ -67,7 +67,7 @@ namespace BookingPhongHoc.Services
             }
         }
 
-        // Phương thức lấy vai trò của giáo viên theo ID
+        // lấy role của gv theo ID
         public async Task<int> GetTeacherRoleById(string teacherId)
         {
             var teacher = await GetTeacherById(teacherId);
@@ -78,7 +78,9 @@ namespace BookingPhongHoc.Services
             return -1;
         }
 
-        // Phương thức tạo lịch đặt phòng
+
+
+        // tạo booking
         public async Task<Bookings> CreateBooking(CreateBooking input)
         {
             if (input.EndTime <= input.StartTime)
@@ -88,6 +90,7 @@ namespace BookingPhongHoc.Services
 
             var allBookings = await GetAllBookings();
 
+
             // Kiểm tra xem có lịch đặt phòng nào cho phòng này trong khoảng thời gian yêu cầu không
             var existingRoomBooking = allBookings.FirstOrDefault(b => b.Fields.RoomId == input.RoomId
                 && ((input.StartTime >= b.Fields.StartTime && input.StartTime <= b.Fields.EndTime)
@@ -95,6 +98,7 @@ namespace BookingPhongHoc.Services
 
             if (existingRoomBooking != null)
             {
+                // néu status là approved thì ko thể book phòng
                 if (existingRoomBooking.Fields.StatusBooking == (int)StatusBooking.approved)
                 {
                     throw new Exception($"Phòng đã được đặt từ {existingRoomBooking.Fields.StartTime} đến {existingRoomBooking.Fields.EndTime}");
@@ -144,11 +148,69 @@ namespace BookingPhongHoc.Services
             return createdBooking.Fields;
         }
 
-        // Phương thức lấy danh sách đặt phòng với trạng thái "pending"
+
+
+        // lấy booking có status "pending"
         public async Task<BookingFields[]> GetStatusPending()
         {
             var allBookings = await GetAllBookings();
             return allBookings.Where(b => b.Fields.StatusBooking == (int)StatusBooking.pending).ToArray();
         }
+
+
+
+        //  cập nhật trạng thái booking
+        public async Task UpdateBookingStatus(string bookingId, string action)
+        {
+            var allBookings = await GetAllBookings();
+            var bookingToUpdate = allBookings.FirstOrDefault(b => b.Id == bookingId);
+
+            if (bookingToUpdate == null)
+            {
+                throw new Exception("Không tìm thấy booking ");
+            }
+
+            if (action == "Duyệt")
+            {
+                var overrideBooking = allBookings.FirstOrDefault(b => b.Fields.RoomId == bookingToUpdate.Fields.RoomId
+                    && b.Fields.StatusBooking == (int)StatusBooking.approved
+                    && ((bookingToUpdate.Fields.StartTime >= b.Fields.StartTime && bookingToUpdate.Fields.StartTime <= b.Fields.EndTime)
+                        || (bookingToUpdate.Fields.EndTime >= b.Fields.StartTime && bookingToUpdate.Fields.EndTime <= b.Fields.EndTime)));
+
+                if (overrideBooking != null)
+                {
+                    throw new Exception($"Phòng này đã được đặt trong khung giờ {overrideBooking.Fields.StartTime} - {overrideBooking.Fields.EndTime}, vui lòng hủy lịch này");
+                }
+
+                bookingToUpdate.Fields.StatusBooking = (int)StatusBooking.approved;
+            }
+            else if (action == "Hủy")
+            {
+                bookingToUpdate.Fields.StatusBooking = (int)StatusBooking.cancel;
+            }
+            else
+            {
+                throw new Exception("Hành động không hợp lệ");
+            }
+
+            var record = new { fields = new { StatusBooking = bookingToUpdate.Fields.StatusBooking } };
+            var url = GetUrl(bookingId);
+
+            var response = await SendJsonAsync(HttpMethod.Patch, url, record);
+            if (!response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Error PATCH record: {response.StatusCode}\n{responseContent}");
+            }
+        }
+
+
+
+
+
     }
+
+
+
+
 }
